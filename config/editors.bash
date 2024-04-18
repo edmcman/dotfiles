@@ -17,5 +17,5 @@ GUI_EDITORS=(
 	'code' # setup-util-vscode
 	'gedit'             # linux default
 	'gnome-text-editor' # fedora default
-	'TextEdit'          # macos default
+	# 'TextEdit'          # macos default
 )
