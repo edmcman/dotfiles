@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function google-chrome-work() {
+    source "$DOROTHY/sources/bash.bash"
+
+    google-chrome --class=Work --user-data-dir="$HOME/.config/google-chrome-work" "$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	google-chrome-work "$@"
+fi
