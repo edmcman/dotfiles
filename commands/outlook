@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function outlook() {
+    source "$DOROTHY/sources/bash.bash"
+
+    DESKTOP="$(fgrep -l -R 'Outlook (PWA)' ~/.local/share/applications/ | head -n1)"
+
+    if [ -z "$DESKTOP" ]; then
+        echo "Outlook (PWA) not found"
+        return 1
+    fi
+
+    gtk-launch "$(basename $DESKTOP)"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	outlook "$@"
+fi
