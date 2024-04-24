@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+function pbpaste() {
+    source "$DOROTHY/sources/bash.bash"
+
+    if is-mac
+    then
+        pbpaste
+    elif is-linux
+    then
+        xclip -o -selection clipboard
+    else
+        echo "Unsupported OS"
+        exit 1
+    fi
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	pbpaste "$@"
+fi
