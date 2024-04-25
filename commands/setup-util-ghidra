@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+function setup-util-ghidra() {
+    source "$DOROTHY/sources/bash.bash"
+
+    GHIDRA_DIR="$HOME/Ghidra"
+
+    RELEASE="--latest"
+    if [ -n "${1:-}" ]; then
+        RELEASE="--tag=$1_Build"
+    fi
+
+    RELEASE_ZIP="$(github-download --slug=NationalSecurityAgency/ghidra $RELEASE --asset-regexp='*.zip' --dry)"
+    RELEASE_ZIP_BASENAME="$(basename "$RELEASE_ZIP")"
+
+    GHIDRA_VERSION="$(echo $RELEASE_ZIP_BASENAME | grep -oP '\d+\.\d+\.\d+')"
+    GHIDRA_UNZIP_DIR="ghidra_${GHIDRA_VERSION}_PUBLIC"
+
+    down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
+
+    if [ -d "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR" ]; then
+        echo "Ghidra is already extracted in $GHIDRA_DIR/$GHIDRA_UNZIP_DIR"
+    else
+        unzip -q "$GHIDRA_DIR/$RELEASE_ZIP_BASENAME" -d "$GHIDRA_DIR"
+    fi
+
+    # Make ghidra-{version} symlink
+    if [ -L "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}" ]; then
+        echo "ghidra-${GHIDRA_VERSION} symlink already exists"
+    else
+        if is-wsl; then
+            ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun.bat" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+        else
+            ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+        fi
+    fi
+
+    # Make ghidra symlink
+    if [ "$RELEASE" = "--latest" ]; then
+        # Remove existing symlink because it could be an older version
+        rm -f "$XDG_BIN_HOME/ghidra"
+        ln -s "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}" "$XDG_BIN_HOME/ghidra"
+    fi
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	setup-util-ghidra "$@"
+fi
