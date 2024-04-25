@@ -16,7 +16,7 @@ function setup-util-ghidra2() {
     GHIDRA_VERSION="$(echo $RELEASE_ZIP_BASENAME | grep -oP '\d+\.\d+\.\d+')"
     GHIDRA_UNZIP_DIR="ghidra_${GHIDRA_VERSION}_PUBLIC"
 
-    down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
+    #down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
 
     function build_ghidra {
         # dependencies
@@ -29,9 +29,10 @@ function setup-util-ghidra2() {
         --cli='ghidraRun'
         "$@"
         DOWNLOAD="$RELEASE_ZIP"
+        #DOWNLOAD="/home/ed/Ghidra/ghidra_11.0.3_PUBLIC_20240410.zip"
         DOWNLOAD_ARCHIVE_FORMAT='zip'
-        #DOWNLOAD_ARCHIVE_GLOB='bash-*/*'
-        DOWNLOAD_BUILD_EVAL='build_ghidra'
+        DOWNLOAD_ARCHIVE_GLOB='ghidra_*/*'
+        #DOWNLOAD_BUILD_EVAL='build_ghidra'
     )
 
     setup-util "${options[@]}"
