@@ -41,6 +41,9 @@ function setup-util-ghidra() {
         rm -f "$XDG_BIN_HOME/ghidra"
         ln -s "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}" "$XDG_BIN_HOME/ghidra"
     fi
+
+    # Make ghidra venv
+    test -d "$GHIDRA_DIR/venv" || python -m venv "$GHIDRA_DIR/venv"
 }
 
 # fire if invoked standalone

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+function setup-util-ghidrathon() {
+    source "$DOROTHY/sources/bash.bash"
+
+    if [ -z "${VIRTUAL_ENV:-}" ]; then
+        echo "Please activate a virtual environment before running this script."
+        exit 1
+    fi
+
+    if [ -z "${GHIDRA_INSTALL_DIR:-}" ]; then
+        echo "Please set the GHIDRA_INSTALL_DIR environment variable to the path of your Ghidra installation."
+        exit 1
+    fi
+
+    GHIDRA_DIR="$HOME/Ghidra"
+    GHIDRATHON_DIR="$GHIDRA_DIR/ghidrathon"
+    mkdir -p "$GHIDRATHON_DIR"
+
+    github-download --slug=mandiant/Ghidrathon --latest --archive-format=zip --directory="$GHIDRATHON_DIR" --asset-regexp='*.zip'
+
+    python -m pip install -r "$GHIDRATHON_DIR/requirements.txt"
+
+    python "$GHIDRATHON_DIR/ghidrathon_configure.py" "$GHIDRA_INSTALL_DIR"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	setup-util-ghidrathon "$@"
+fi
