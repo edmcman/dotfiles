@@ -32,7 +32,7 @@ function setup-util-ghidra2() {
         #DOWNLOAD="/home/ed/Ghidra/ghidra_11.0.3_PUBLIC_20240410.zip"
         DOWNLOAD_ARCHIVE_FORMAT='zip'
         DOWNLOAD_ARCHIVE_GLOB='ghidra_*/*'
-        #DOWNLOAD_BUILD_EVAL='build_ghidra'
+        DOWNLOAD_BUILD_EVAL='build_ghidra'
     )
 
     setup-util "${options[@]}"
