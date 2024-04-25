@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+function setup-util-ghidra2() {
+    source "$DOROTHY/sources/bash.bash"
+
+    GHIDRA_DIR="$HOME/Ghidra"
+
+    RELEASE="--latest"
+    if [ -n "${1:-}" ]; then
+        RELEASE="--tag=$1_Build"
+    fi
+
+    RELEASE_ZIP="$(github-download --slug=NationalSecurityAgency/ghidra $RELEASE --asset-regexp='*.zip' --dry)"
+    RELEASE_ZIP_BASENAME="$(basename "$RELEASE_ZIP")"
+
+    GHIDRA_VERSION="$(echo $RELEASE_ZIP_BASENAME | grep -oP '\d+\.\d+\.\d+')"
+    GHIDRA_UNZIP_DIR="ghidra_${GHIDRA_VERSION}_PUBLIC"
+
+    down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
+
+	function build_ghidra {
+		# dependencies
+		#setup-util-devel --quiet
+		#source "$DOROTHY/sources/environment.sh"
+        echo noop
+	}
+
+    local options=(
+		--cli='ghidraRun'
+        "$@"
+        DOWNLOAD="$RELEASE_ZIP"
+        DOWNLOAD_ARCHIVE_FORMAT='zip'
+        #DOWNLOAD_ARCHIVE_GLOB='bash-*/*'
+        DOWNLOAD_BUILD_EVAL='build_ghidra'
+	)
+
+    setup-util "${options[@]}"
+
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	setup-util-ghidra2 "$@"
+fi
