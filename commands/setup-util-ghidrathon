@@ -29,5 +29,5 @@ function setup-util-ghidrathon() {
 
 # fire if invoked standalone
 if test "$0" = "${BASH_SOURCE[0]}"; then
-	setup-util-ghidrathon "$@"
+    setup-util-ghidrathon "$@"
 fi
