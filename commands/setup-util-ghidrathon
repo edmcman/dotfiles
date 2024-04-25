@@ -19,9 +19,12 @@ function setup-util-ghidrathon() {
 
     github-download --slug=mandiant/Ghidrathon --latest --archive-format=zip --directory="$GHIDRATHON_DIR" --asset-regexp='*.zip'
 
+    # These are straight from the Ghidrathon README
     python -m pip install -r "$GHIDRATHON_DIR/requirements.txt"
-
     python "$GHIDRATHON_DIR/ghidrathon_configure.py" "$GHIDRA_INSTALL_DIR"
+
+    # Install into Ghidra
+    unzip "$GHIDRATHON_DIR/Ghidrathon-*.zip" -d "$GHIDRA_INSTALL_DIR/Ghidra/Extensions/"
 }
 
 # fire if invoked standalone
