@@ -18,21 +18,21 @@ function setup-util-ghidra2() {
 
     down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
 
-	function build_ghidra {
-		# dependencies
-		#setup-util-devel --quiet
-		#source "$DOROTHY/sources/environment.sh"
+    function build_ghidra {
+        # dependencies
+        #setup-util-devel --quiet
+        #source "$DOROTHY/sources/environment.sh"
         echo noop
-	}
+    }
 
     local options=(
-		--cli='ghidraRun'
+        --cli='ghidraRun'
         "$@"
         DOWNLOAD="$RELEASE_ZIP"
         DOWNLOAD_ARCHIVE_FORMAT='zip'
         #DOWNLOAD_ARCHIVE_GLOB='bash-*/*'
         DOWNLOAD_BUILD_EVAL='build_ghidra'
-	)
+    )
 
     setup-util "${options[@]}"
 
@@ -40,5 +40,5 @@ function setup-util-ghidra2() {
 
 # fire if invoked standalone
 if test "$0" = "${BASH_SOURCE[0]}"; then
-	setup-util-ghidra2 "$@"
+    setup-util-ghidra2 "$@"
 fi
