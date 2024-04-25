@@ -12,3 +12,10 @@
 # Used by `theme.sh` and `theme.fish`
 # You can use `select-theme` to configure this.
 export DOROTHY_THEME='system'
+
+#echo hello from interactive.sh
+
+if [ -x "$(command -v batcat)" ] && [ ! -x "$(command -v bat)" ]
+then
+    alias bat=batcat
+fi
