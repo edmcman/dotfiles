@@ -1,0 +1,3 @@
+[submodule "priv"]
+	path = priv
+	url = https://github.com/edmcman/dotfiles-priv
