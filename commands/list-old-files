@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+function list-old-files() {
+    source "$DOROTHY/sources/bash.bash"
+
+    # Help message function
+    show_help() {
+        echo "Usage: $0 [--since \"date string\"] [--print0] [/optional/path]"
+        echo "Finds files in the specified path (or current directory if no path is provided) modified before the given date. If no date is provided, defaults to 30 days ago."
+        echo "  -h, --help     Display this help message and exit."
+        echo "  --since        Optional. A date string understood by the 'date' command, e.g., '30 days ago'."
+        echo "  --print0       Optional. Terminate each output line with a 0 byte rather than a newline, for use with xargs -0."
+        echo "  /optional/path Optional. Must be the last argument. The directory to search in. Default is the current directory."
+    }
+
+    # Default date, path, and print mode
+    date_str="30 days ago"  # Default date
+    path="."
+    print_mode="-print"
+
+    # Argument parsing
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --since)
+                if [[ -n "$2" && "$2" != --* ]]; then
+                    date_str="$2"
+                    shift 2
+                else
+                    echo "Error: '--since' option requires a non-empty date string."
+                    show_help
+                    exit 1
+                fi
+                ;;
+            --print0)
+                print_mode="-print0"
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -*)
+                echo "Error: Unsupported option $1"
+                show_help
+                exit 1
+                ;;
+            *)
+                # Assume any other argument is the path and must be the last argument
+                if [[ $# -eq 1 ]]; then
+                    path="$1"
+                    shift
+                else
+                    echo "Error: Path must be the last argument. Found unexpected parameter: $1"
+                    show_help
+                    exit 1
+                fi
+                ;;
+        esac
+    done
+
+    # Verify that a valid date string has been set
+    if ! date -d "$date_str" +"%Y-%m-%d" &> /dev/null; then
+        echo "Error: Invalid date format. Please provide a valid date."
+        exit 1
+    fi
+
+    # Convert date string to a format acceptable by find
+    ref_date=$(date -d "$date_str" +"%Y-%m-%d")
+
+    # Use find to locate files older than the specified date with the chosen print mode
+    find $path -type f ! -newermt $ref_date $print_mode
+
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	list-old-files "$@"
+fi

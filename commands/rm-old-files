@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+function rm-old-files() {
+    source "$DOROTHY/sources/bash.bash"
+
+    # Help message function
+    show_help() {
+        echo "Usage: $0 [--dry-run] [--since \"date string\"] [/optional/path]"
+        echo "Remove files in the specified path (or current directory if no path is provided) modified before the given date. If no date is provided, defaults to 30 days ago."
+        echo "  -h, --help     Display this help message and exit."
+        echo "  -n, --dry-run  Print the files that would be removed, but do not actually remove them."
+        echo "  --since        Optional. A date string understood by the 'date' command, e.g., '30 days ago'."
+        echo "  /optional/path Optional. Must be the last argument. The directory to remove in. Default is the current directory."
+    }
+
+    # Check for help option
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        show_help
+        exit 0
+    fi
+
+    local DRY_RUN=no
+    # Check for -n option
+    if [[ "${1:-}" == "-n" || "${1:-}" == "--dry-run" ]]; then
+        DRY_RUN=yes
+        shift
+    fi
+
+    if [ "$DRY_RUN" == "yes" ]; then
+        echo "wat $@"
+        list-old-files --print0 "$@" | xargs -n 1 -0 echo Would remove:
+    else
+        list-old-files --print0 "$@" | xargs -0 rm
+    fi
+
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	rm-old-files "$@"
+fi
