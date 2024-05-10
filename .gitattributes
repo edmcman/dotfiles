@@ -1,3 +1,0 @@
-config.local/** filter=strongbox diff=strongbox
-commands.local/** filter=strongbox diff=strongbox
-files.local/** filter=strongbox diff=strongbox
