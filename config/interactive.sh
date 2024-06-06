@@ -19,3 +19,6 @@ if [ -x "$(command -v batcat)" ] && [ ! -x "$(command -v bat)" ]
 then
     alias bat=batcat
 fi
+
+# Load public aliases
+source "$DOROTHY/user/config/alias.sh"

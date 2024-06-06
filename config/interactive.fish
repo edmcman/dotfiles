@@ -28,3 +28,6 @@ function fish_user_key_bindings
     bind ! bind_bang
     bind '$' bind_dollar
 end
+
+# Load public aliases
+source "$DOROTHY/user/config/alias.sh"
