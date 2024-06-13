@@ -3,7 +3,7 @@
 function google-chrome-work() {
     source "$DOROTHY/sources/bash.bash"
 
-    google-chrome --class=Work --user-data-dir="$HOME/.config/google-chrome-work" "$@"
+    google-chrome --user-data-dir="$HOME/.config/google-chrome-work" --class=Work "$@"
 }
 
 # fire if invoked standalone
