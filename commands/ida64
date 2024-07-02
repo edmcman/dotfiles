@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+function ida64() {
+    source "$DOROTHY/sources/bash.bash"
+
+    # XXX ls /opt/idapro and find the highest version by default?
+
+    IDADIR="/opt/idapro"
+    VERSION="8.4"
+
+    "$IDADIR"/"$VERSION"/ida64 "$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	ida64 "$@"
+fi
