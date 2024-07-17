@@ -12,4 +12,4 @@ export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH" && eval "$(pyenv init -)"
 
 # conda
-[[ -f /opt/conda/etc/profile.d/conda.sh ]] && source /opt/conda/etc/profile.d/conda.sh
+# see activate_conda in interactive.{sh,fish}

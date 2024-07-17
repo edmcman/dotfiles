@@ -22,3 +22,7 @@ fi
 
 # Load public aliases
 source "$DOROTHY/user/config/alias.sh"
+
+function activate_conda() {
+    source /opt/conda/etc/profile.d/conda.sh
+}

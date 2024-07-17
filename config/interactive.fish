@@ -29,5 +29,9 @@ function fish_user_key_bindings
     bind '$' bind_dollar
 end
 
+function activate_conda
+    source /opt/conda/etc/fish/conf.d/conda.fish
+end
+
 # Load public aliases
 source "$DOROTHY/user/config/alias.sh"
