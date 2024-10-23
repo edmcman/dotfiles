@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function pidgrep() {
+    source "$DOROTHY/sources/bash.bash"
+
+    MYPID="$$"
+
+    ps ax --format user,pid,ppid,command | grep "$@" | awk '$2 != '"$$"' && $3 != '"$$"' {print $2}' | xargs
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	pidgrep "$@"
+fi
