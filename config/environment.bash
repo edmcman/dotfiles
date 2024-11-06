@@ -7,6 +7,10 @@ export GHIDRA_INSTALL_DIR
 
 GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | tail -n1)"
 
+# New versions of python's certifi don't know how to find built-in SSL
+# certificates apparently.  Need this to support Zscaler MitM.
+[[ -f /etc/ssl/certs/ca-certificates.crt ]] && export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt || true
+
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH" && eval "$(pyenv init -)" || true
