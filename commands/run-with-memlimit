@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+function run-with-memlimit() {
+    source "$DOROTHY/sources/bash.bash"
+
+    set -e
+
+    # Help message function
+    show_help() {
+        echo "Usage: $0 <memory limit> <command>"
+        echo "Run a command with a memory limit."
+    }
+
+    # Check for at least two arguments
+    if [ $# -lt 2 ]; then
+        show_help
+        exit 1
+    fi
+
+    local MEM_LIMIT=$(size-helper "$1")
+    shift
+    local CMD="$@"
+
+    #echo "Run $CMD with $MEM_LIMIT byte memory limit"
+
+    systemd-run --user --scope -p MemoryLimit="$MEM_LIMIT" $CMD
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	run-with-memlimit "$@"
+fi
