@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-function size_helper() {
+function size-helper() {
     source "$DOROTHY/sources/bash.bash"
 
     set -e
 
     if [ "${1:-}" == "" ]
     then
-        echo "Usage: size_helper <size expression>"
+        echo "Usage: size-helper <size expression>"
         exit 1
     fi
 
@@ -31,5 +31,5 @@ function size_helper() {
 
 # fire if invoked standalone
 if test "$0" = "${BASH_SOURCE[0]}"; then
-	size_helper "$@"
+	size-helper "$@"
 fi
