@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function notify() {
+    source "$DOROTHY/sources/bash.bash"
+
+    set -e
+
+    CMD="$@"
+    curl -s \
+        -F "token=$PUSHOVER_TOKEN" \
+        -F "user=$PUSHOVER_USER" \
+        -F "message=$CMD" \
+        https://api.pushover.net/1/messages.json
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	notify "$@"
+fi
