@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+function size_helper() {
+    source "$DOROTHY/sources/bash.bash"
+
+    set -e
+
+    if [ "${1:-}" == "" ]
+    then
+        echo "Usage: size_helper <size expression>"
+        exit 1
+    fi
+
+    local size="$1"
+    local multiplier=1
+
+    case "$size" in
+        *KiB) multiplier=1024 ;;
+        *MiB) multiplier=$((1024**2)) ;;
+        *GiB) multiplier=$((1024**3)) ;;
+        *TiB) multiplier=$((1024**4)) ;;
+        *K) multiplier=1000 ;;
+        *M) multiplier=$((1000**2)) ;;
+        *G) multiplier=$((1000**3)) ;;
+        *T) multiplier=$((1000**4)) ;;
+    esac
+
+    # Remove the unit suffix and multiply to convert to bytes
+    echo $(( ${size%[KMGT]*} * multiplier ))
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	size_helper "$@"
+fi
