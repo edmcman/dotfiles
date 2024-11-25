@@ -58,6 +58,7 @@ function slownotify() {
 
      # Start the command and time its execution
     start_time=$(date +%s)
+    set +e
     "${cmd[@]}"
 
     return_status=$?
