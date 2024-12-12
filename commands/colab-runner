@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+function colab-runner() {
+    source "$DOROTHY/sources/bash.bash"
+
+    # XXX: Do we want --rm?
+
+    # XXX: Make .dotenv available somehow.
+
+    docker run --name colab-runner --rm --gpus=all -v /etc/ssl/certs:/etc/ssl/certs:ro -p 127.0.0.1:8080:8080 us-docker.pkg.dev/colab-images/public/runtime
+
+ }
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	colab-runner "$@"
+fi
