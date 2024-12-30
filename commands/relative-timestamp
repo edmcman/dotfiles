@@ -29,7 +29,7 @@ function relative-timestamp() {
         then
             echo "$(pretty-time $elapsed) $line"
         else
-            echo-style --no-trail "$style""$(pretty-time $elapsed)" --reset="" " $line"
+            echo-style "$style""$(pretty-time $elapsed)" --reset="" " $line"
         fi
 
         last="$(date +%s.%N)"
