@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+function pretty-time() {
+    source "$DOROTHY/sources/bash.bash"
+
+    local t=${1:?Usage: pretty-time <time>}
+    local d=0 h=0 m=0 s=0  # Explicitly initialize all variables
+
+
+    # Calculate days, hours, minutes, and seconds
+    d=$(echo "$t/86400" | bc)
+    t=$(echo "$t%86400" | bc)
+    h=$(echo "$t/3600" | bc)
+    t=$(echo "$t%3600" | bc)
+    m=$(echo "$t/60" | bc)
+    s=$(echo "$t%60" | bc | awk '{printf "%.2f", $1}' | awk '{printf "%.2g", $1}')
+
+    # Build the output string
+    local output=""
+    ((d > 0)) && output+="${d}d "
+    ((h > 0)) && output+="${h}h "
+    ((m > 0)) && output+="${m}m "
+    output+="${s}s"  # Always include seconds
+    echo "$output"
+
+ }
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	pretty-time "$@"
+fi

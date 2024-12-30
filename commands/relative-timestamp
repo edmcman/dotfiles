@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+function relative-timestamp() {
+    source "$DOROTHY/sources/bash.bash"
+
+    WARN=1.0
+    ERROR=10.0
+
+
+    last="$(date +%s.%N)"
+
+    while IFS= read -r line
+    do
+        now="$(date +%s.%N)"
+        elapsed=$(echo "$now - $last" | bc)
+
+        if (( $(echo "$elapsed >= $ERROR" | bc -l) )); then
+            style="--error="
+        elif (( $(echo "$elapsed >= $WARN" | bc -l) )); then
+            style="--warning="
+        else
+            style=""
+        fi
+
+        # XXX: Padding?
+
+        # echo-style is real slow, so avoid it if possible
+        if test "z$style" = "z"
+        then
+            echo "$(pretty-time $elapsed) $line"
+        else
+            echo-style --no-trail "$style""$(pretty-time $elapsed)" --reset="" " $line"
+        fi
+
+        last="$(date +%s.%N)"
+    done
+
+ }
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	relative-timestamp "$@"
+fi
