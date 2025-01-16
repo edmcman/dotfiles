@@ -10,6 +10,8 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 # New versions of python's certifi don't know how to find built-in SSL
 # certificates apparently.  Need this to support Zscaler MitM.
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt || true
+# openai needs this (still certifi related)
+[[ -f /etc/ssl/certs/ca-certificates.crt ]] && export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt || true
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
