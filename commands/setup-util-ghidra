@@ -15,7 +15,7 @@ function setup-util-ghidra() {
     RELEASE_ZIP="$(github-download --slug=NationalSecurityAgency/ghidra $RELEASE --asset-regexp='.zip' --dry)"
     RELEASE_ZIP_BASENAME="$(basename "$RELEASE_ZIP")"
 
-    GHIDRA_VERSION="$(echo $RELEASE_ZIP_BASENAME | grep -oP '\d+(\.\d+)*' | head -n1)"
+    GHIDRA_VERSION="$(echo $RELEASE_ZIP_BASENAME | perl -ne 'print $1 if /(\d+(?:\.\d+)*)/' | head -n1)"
     GHIDRA_UNZIP_DIR="ghidra_${GHIDRA_VERSION}_PUBLIC"
 
     down --directory="$GHIDRA_DIR" "$RELEASE_ZIP"
