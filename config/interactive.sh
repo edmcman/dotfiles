@@ -23,6 +23,9 @@ fi
 # Load public aliases
 source "$DOROTHY/user/config/alias.sh"
 
+# pyenv
+test -d $PYENV_ROOT && eval "$(pyenv init -)"
+
 function activate_conda() {
     source /opt/conda/etc/profile.d/conda.sh
 }

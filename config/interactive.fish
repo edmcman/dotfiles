@@ -33,5 +33,8 @@ function activate_conda
     source /opt/conda/etc/fish/conf.d/conda.fish
 end
 
+# pyenv
+test -d $PYENV_ROOT; and pyenv init - | source
+
 # Load public aliases
 source "$DOROTHY/user/config/alias.sh"
