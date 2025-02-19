@@ -36,5 +36,12 @@ end
 # pyenv
 test -d $PYENV_ROOT; and pyenv init - | source
 
+# asdf
+set _asdf_shims "$HOME/.asdf/shims"
+if not contains $_asdf_shims $PATH
+    set -gx --prepend PATH $_asdf_shims
+end
+set --erase _asdf_shims
+
 # Load public aliases
 source "$DOROTHY/user/config/alias.sh"

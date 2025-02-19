@@ -26,6 +26,18 @@ source "$DOROTHY/user/config/alias.sh"
 # pyenv
 test -d $PYENV_ROOT && eval "$(pyenv init -)"
 
+# asdf
+if [ -x "$(command -v asdf)" ]
+then
+    _asdf_shims="$HOME/.asdf/shims"
+    case ":$PATH:" in
+        *":$_asdf_shims:"*) ;;
+        *) export PATH="$_asdf_shims:$PATH" ;;
+    esac
+    unset _asdf_shims
+    . <(asdf completion bash)
+fi
+
 function activate_conda() {
     source /opt/conda/etc/profile.d/conda.sh
 }
