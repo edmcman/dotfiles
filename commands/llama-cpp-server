@@ -10,6 +10,9 @@ function llama-cpp-server() {
     # Very weird this is not a default.
     OFFLOAD_NUM=1000
 
+    # Get from the model...
+    CTX_SIZE=0
+
     set -x
 
     docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
@@ -17,6 +20,7 @@ function llama-cpp-server() {
     -v ~/.llama.cpp/models:/root/.cache \
     ghcr.io/ggml-org/llama.cpp:full-cuda \
     -s \
+    --ctx-size $CTX_SIZE \
     --jinja \
     -fa \
     -hf "$MODEL" \
