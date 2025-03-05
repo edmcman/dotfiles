@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+function llama-cpp-server() {
+    source "$DOROTHY/sources/bash.bash"
+
+    MODEL="${1?Usage: llama-cpp-server <model>}"
+    shift
+    OTHERARGS="$@"
+
+    # Very weird this is not a default.
+    OFFLOAD_NUM=1000
+
+    docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
+    -v /etc/ssl/certs:/etc/ssl/certs:ro \
+    -v ~/.llama.cpp/models:/root/.cache \
+    ghcr.io/ggml-org/llama.cpp:full-cuda \
+    -s \
+    --jinja \
+    -fa \
+    -hf "$MODEL" \
+    --host 0.0.0.0 \
+    -ngl $OFFLOAD_NUM \
+    $OTHERARGS
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	llama-cpp-server "$@"
+fi
