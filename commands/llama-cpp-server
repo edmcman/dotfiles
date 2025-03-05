@@ -10,6 +10,8 @@ function llama-cpp-server() {
     # Very weird this is not a default.
     OFFLOAD_NUM=1000
 
+    set -x
+
     docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
     -v /etc/ssl/certs:/etc/ssl/certs:ro \
     -v ~/.llama.cpp/models:/root/.cache \
