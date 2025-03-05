@@ -3,15 +3,29 @@
 function llama-cpp-server() {
     source "$DOROTHY/sources/bash.bash"
 
-    MODEL="${1?Usage: llama-cpp-server <model>}"
-    shift
+    # Default values
+    MODEL=""
+    OFFLOAD_NUM=100
+    CTX_SIZE=0
+
+    # Parse command line options
+    while getopts ":m:o:c:" opt; do
+        case $opt in
+            m) MODEL="$OPTARG" ;;
+            o) OFFLOAD_NUM="$OPTARG" ;;
+            c) CTX_SIZE="$OPTARG" ;;
+            \?) echo "Invalid option -$OPTARG" >&2; exit 1 ;;
+            :) echo "Option -$OPTARG requires an argument." >&2; exit 1 ;;
+        esac
+    done
+    shift $((OPTIND -1))
+
     OTHERARGS="$@"
 
-    # Very weird this is not a default.
-    OFFLOAD_NUM=1000
-
-    # Get from the model...
-    CTX_SIZE=0
+    if [ -z "$MODEL" ]; then
+        echo "Usage: llama-cpp-server -m <model> [-o <offload_num>] [-c <ctx_size>] [other_args]"
+        exit 1
+    fi
 
     set -x
 
@@ -31,5 +45,5 @@ function llama-cpp-server() {
 
 # fire if invoked standalone
 if test "$0" = "${BASH_SOURCE[0]}"; then
-	llama-cpp-server "$@"
+    llama-cpp-server "$@"
 fi
