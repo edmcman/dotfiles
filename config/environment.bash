@@ -13,6 +13,27 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 # openai needs this (still certifi related)
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt || true
 
+# Java on mac, use the system CAs
+if test -f /Library/Keychains/System.keychain; then
+  export JAVA_TOOL_OPTIONS
+  export JDK_JAVA_OPTIONS
+  JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStoreType=KeychainStore -Djavax.net.ssl.trustStorePath=/Library/Keychains/System.keychain $JAVA_TOOL_OPTIONS"
+  JDK_JAVA_OPTIONS="-Djavax.net.ssl.trustStoreType=KeychainStore -Djavax.net.ssl.trustStorePath=/Library/Keychains/System.keychain $JDK_JAVA_OPTIONS"
+fi
+
+if which clang++-18 &> /dev/null; then
+  export CC CXX
+  CC=clang-18
+  CXX=clang++-18
+fi
+
+if test -f /usr/local/cuda-12.4/bin/nvcc; then
+  export PATH
+  PATH="$PATH:/usr/local/cuda-12.4/bin"
+fi
+
+export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true"
+
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
