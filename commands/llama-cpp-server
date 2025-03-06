@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+function usage() {
+    echo "Usage: llama-cpp-server -m <model> [-o <offload_num>] [-c <ctx_size>] [other_args]"
+    exit 1
+}
+
 function llama-cpp-server() {
     source "$DOROTHY/sources/bash.bash"
 
@@ -14,8 +19,8 @@ function llama-cpp-server() {
             m) MODEL="$OPTARG" ;;
             o) OFFLOAD_NUM="$OPTARG" ;;
             c) CTX_SIZE="$OPTARG" ;;
-            \?) echo "Invalid option -$OPTARG" >&2; exit 1 ;;
-            :) echo "Option -$OPTARG requires an argument." >&2; exit 1 ;;
+            \?) echo "Invalid option -$OPTARG" >&2; usage ;;
+            :) echo "Option -$OPTARG requires an argument." >&2; usage ;;
         esac
     done
     shift $((OPTIND -1))
@@ -23,8 +28,7 @@ function llama-cpp-server() {
     OTHERARGS="$@"
 
     if [ -z "$MODEL" ]; then
-        echo "Usage: llama-cpp-server -m <model> [-o <offload_num>] [-c <ctx_size>] [other_args]"
-        exit 1
+        usage
     fi
 
     set -x
