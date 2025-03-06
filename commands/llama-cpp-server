@@ -29,11 +29,14 @@ function llama-cpp-server() {
 
     set -x
 
-    docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
-    -v /etc/ssl/certs:/etc/ssl/certs:ro \
-    -v ~/.llama.cpp/models:/root/.cache \
-    ghcr.io/ggml-org/llama.cpp:full-cuda \
-    -s \
+
+    #docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
+    #-v /etc/ssl/certs:/etc/ssl/certs:ro \
+    #-v ~/.llama.cpp/models:/root/.cache \
+    #ghcr.io/ggml-org/llama.cpp:full-cuda \
+    #-s \
+    
+    ~/Projects/llama.cpp/build/bin/llama-server \
     --ctx-size $CTX_SIZE \
     --jinja \
     -fa \
