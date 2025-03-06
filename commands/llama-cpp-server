@@ -29,10 +29,9 @@ function llama-cpp-server() {
 
     set -x
 
-
     #docker run --gpus all --rm --name llama.cpp -p 8080:8080 \
     #-v /etc/ssl/certs:/etc/ssl/certs:ro \
-    #-v ~/.llama.cpp/models:/root/.cache \
+    #-v ~/.cache/llama.cpp:/root/.cache/llama.cpp \
     #ghcr.io/ggml-org/llama.cpp:full-cuda \
     #-s \
     
