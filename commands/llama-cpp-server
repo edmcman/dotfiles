@@ -40,7 +40,7 @@ function llama-cpp-server() {
     #-s \
     
     ARGS="--ctx-size $CTX_SIZE \
-    --repeat-penalty 1.2 \
+    --repeat-penalty 1.3 \
     --jinja \
     -fa \
     -hf "$MODEL" \
@@ -48,7 +48,7 @@ function llama-cpp-server() {
     -ngl $OFFLOAD_NUM \
     $OTHERARGS"
 
-    llama-server $ARGS
+    env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS
 }
 
 # fire if invoked standalone
