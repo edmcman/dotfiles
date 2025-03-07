@@ -39,14 +39,16 @@ function llama-cpp-server() {
     #ghcr.io/ggml-org/llama.cpp:full-cuda \
     #-s \
     
-    ~/Projects/llama.cpp/build/bin/llama-server \
-    --ctx-size $CTX_SIZE \
+    ARGS="--ctx-size $CTX_SIZE \
+    --repeat-penalty 1.2 \
     --jinja \
     -fa \
     -hf "$MODEL" \
     --host 0.0.0.0 \
     -ngl $OFFLOAD_NUM \
-    $OTHERARGS
+    $OTHERARGS"
+
+    llama-server $ARGS
 }
 
 # fire if invoked standalone

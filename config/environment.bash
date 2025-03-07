@@ -27,11 +27,19 @@ if which clang++-18 &> /dev/null; then
   CXX=clang++-18
 fi
 
+# nvcc
 if test -f /usr/local/cuda-12.4/bin/nvcc; then
   export PATH
   PATH="$PATH:/usr/local/cuda-12.4/bin"
 fi
 
+# llama.cpp
+if test -f ~/Projects/llama.cpp/build/bin/llama-server; then
+  export PATH
+  PATH="$PATH:$HOME/Projects/llama.cpp/build/bin"
+fi
+
+# java proxy options
 export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true"
 
 # pyenv
