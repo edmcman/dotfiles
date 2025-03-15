@@ -48,7 +48,10 @@ function llama-cpp-server() {
     -ngl $OFFLOAD_NUM \
     $OTHERARGS"
 
-    env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS
+    setsid env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS &
+    pid=$!
+    trap "kill -- -$pid" SIGINT SIGTERM EXIT
+    wait $pid
 }
 
 # fire if invoked standalone
