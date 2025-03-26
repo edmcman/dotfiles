@@ -50,8 +50,12 @@ function llama-cpp-server() {
     -ngl $OFFLOAD_NUM \
     $OTHERARGS"
 
-    setsid env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS &
-    pid=$!
+    {
+        # Change directory so chat-template-file is relative
+        cd ~/Projects/llama.cpp
+        setsid env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS &
+        pid=$!
+    }
 
     function cleanup() {
         echo llama-cpp-server: Cleaning up
