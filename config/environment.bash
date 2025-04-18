@@ -44,7 +44,9 @@ export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-
+if [[ -d $PYENV_ROOT/bin ]]
+then
+  export PATH="$PYENV_ROOT/bin:$PATH"
+fi
 # conda
 # see activate_conda in interactive.{sh,fish}
