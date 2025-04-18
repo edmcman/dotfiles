@@ -53,6 +53,7 @@ function llama-cpp-server() {
     {
         # Change directory so chat-template-file is relative
         cd ~/Projects/llama.cpp
+        ulimit -s unlimited
         setsid env GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 llama-server $ARGS &
         pid=$!
     }

@@ -9,7 +9,7 @@ function setup-util-ghidra() {
 
     RELEASE="--latest"
     if [ -n "${1:-}" ]; then
-        RELEASE="--tag=$1_Build"
+        RELEASE="--tag=Ghidra_$1_build"
     fi
 
     RELEASE_ZIP="$(github-download --slug=NationalSecurityAgency/ghidra $RELEASE --asset-regexp='.zip' --dry)"
