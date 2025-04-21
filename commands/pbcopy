@@ -5,7 +5,7 @@ function pbcopy() {
 
     if is-mac
     then
-        pbcopy
+        /usr/bin/pbcopy
     elif is-linux
     then
         xclip -selection clipboard
