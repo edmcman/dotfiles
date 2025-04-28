@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function ollama-server() {
+    source "$DOROTHY/sources/bash.bash"
+
+    docker rm ollama || true
+
+    docker run -d --gpus=all -v ~/ollama:/root/.ollama -p 11434:11434 --name ollama -v /etc/ssl/certs/ZscalerRoot0.pem:/etc/ssl/certs/Zscalerroot0.pem ollama/ollama
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+    ollama-server "$@"
+fi
