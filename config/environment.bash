@@ -14,6 +14,8 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt || true
 # primp needs this
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export PRIMP_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt || true
+# node needs this
+[[ -f /etc/ssl/certs/ca-certificates.crt ]] && export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt || true
 
 
 # Java on mac, use the system CAs
