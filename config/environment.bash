@@ -56,8 +56,11 @@ fi
 # conda
 # see activate_conda in interactive.{sh,fish}
 
+# A federated server...
+export DEBUGINFOD_URLS="https://debuginfod.elfutils.org/"
+
 # debuginfod on Ubuntu
 if [[ -f /etc/os-release ]] && grep -q "^ID=ubuntu" /etc/os-release
 then
-  export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+  export DEBUGINFOD_URLS="$DEBUGINFOD_URLS https://debuginfod.ubuntu.com"
 fi
