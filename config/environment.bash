@@ -55,3 +55,9 @@ then
 fi
 # conda
 # see activate_conda in interactive.{sh,fish}
+
+# debuginfod on Ubuntu
+if [[ -f /etc/os-release ]] && grep -q "^ID=ubuntu" /etc/os-release
+then
+  export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+fi
