@@ -56,6 +56,14 @@ fi
 # conda
 # see activate_conda in interactive.{sh,fish}
 
+# asdf
+# This is important to have in here for non-interactive shells
+ASDF_SHIMS_DIR="$HOME/.asdf/shims"
+if [[ -d "$ASDF_SHIMS_DIR" ]]
+then
+  export PATH="$ASDF_SHIMS_DIR:$PATH"
+fi
+
 # A federated server...
 export DEBUGINFOD_URLS="https://debuginfod.elfutils.org/"
 
