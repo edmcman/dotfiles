@@ -4,7 +4,7 @@ function gifenc() {
     source "$DOROTHY/sources/bash.bash"
 
     palette="/tmp/palette.png"
-    filters="fps=15"
+    filters="fps=15,scale=1024:-1:flags=lanczos,mpdecimate"
     #filters="fps=15,scale=320:-1:flags=lanczos"
 
     ffmpeg -v warning -i "$1" -vf "$filters,palettegen" -y "$palette"
