@@ -38,9 +38,10 @@ test -d $PYENV_ROOT; and pyenv init - | source
 
 # asdf
 set _asdf_shims "$HOME/.asdf/shims"
-if not contains $_asdf_shims $PATH
+# Somehow dorothy orders these pretty strangely.
+#if not contains $_asdf_shims $PATH
     set -gx --prepend PATH $_asdf_shims
-end
+#end
 set --erase _asdf_shims
 
 # Load public aliases
