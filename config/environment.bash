@@ -56,14 +56,6 @@ fi
 # conda
 # see activate_conda in interactive.{sh,fish}
 
-# asdf
-# This is important to have in here for non-interactive shells
-ASDF_SHIMS_DIR="$HOME/.asdf/shims"
-if [[ -d "$ASDF_SHIMS_DIR" ]]
-then
-  export PATH="$ASDF_SHIMS_DIR:$PATH"
-fi
-
 # A federated server...
 export DEBUGINFOD_URLS="https://debuginfod.elfutils.org/"
 
@@ -72,3 +64,13 @@ if [[ -f /etc/os-release ]] && grep -q "^ID=ubuntu" /etc/os-release
 then
   export DEBUGINFOD_URLS="$DEBUGINFOD_URLS https://debuginfod.ubuntu.com"
 fi
+
+function after_everything {
+  # This is important to have in environment.bash for non-interactive shells.
+  # The after_everything hook is important so that the asdf shims are in PATH before /usr/bin
+  ASDF_SHIMS_DIR="$HOME/.asdf/shims"
+  if [[ -d "$ASDF_SHIMS_DIR" ]]
+  then
+    export PATH="$ASDF_SHIMS_DIR:$PATH"
+  fi
+}
