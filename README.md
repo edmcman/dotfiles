@@ -10,8 +10,7 @@ This is Edward J Schwartz's user configuration for the [Dorothy](https://github.
 3. Run `setup-util-strongbox`
 4. Run `setup-util-gh` and authenticate
 5. Delete `~/.config/dorothy`
-6. Clone this repository to `~/.config/dorothy`
-7. Run `git submodule init` and `git submodule update`
+6. Clone this repository to `~/.config/dorothy`: `git clone --recursive https://github.com/edmcman/dotfiles dorothy`
 
 ## TODO
 
