@@ -17,6 +17,7 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 # node needs this
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt || true
 
+JDK_JAVA_OPTIONS=""
 
 # Java on mac, use the system CAs
 if test -f /Library/Keychains/System.keychain; then
@@ -45,7 +46,7 @@ if test -f ~/Projects/llama.cpp/build/bin/llama-server; then
 fi
 
 # java proxy options
-export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true"
+export JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS -Djdk.rmi.ssl.client.enableEndpointIdentification=false -Djava.net.useSystemProxies=true"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
