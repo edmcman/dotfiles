@@ -45,8 +45,9 @@ if test -f ~/Projects/llama.cpp/build/bin/llama-server; then
   PATH="$PATH:$HOME/Projects/llama.cpp/build/bin"
 fi
 
-# java proxy options
-export JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS -Djdk.rmi.ssl.client.enableEndpointIdentification=false -Djava.net.useSystemProxies=true"
+# java proxy and ssl options
+export JDK_JAVA_OPTIONS="-Djdk.rmi.ssl.client.enableEndpointIdentification=false $JDK_JAVA_OPTIONS"
+export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true $JDK_JAVA_OPTIONS"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
