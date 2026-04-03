@@ -10,7 +10,7 @@ function outlook() {
         return 1
     fi
 
-    gtk-launch "$(basename $DESKTOP)"
+    gtk-launch "$(basename "$DESKTOP")"
 }
 
 # fire if invoked standalone

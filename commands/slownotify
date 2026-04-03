@@ -24,7 +24,7 @@ function slownotify() {
     cmd=("$@")
 
     # Check if any command is specified
-    if [ ${#cmd[@]} -eq 0 ]; then
+    if [[ ${#cmd[@]} -eq 0 ]]; then
     echo "Usage: $(basename "$0") [ -t <timeout> ] [ -c <cancel delay> ] [ -m <message> ] <command>"
     exit 1
     fi
@@ -42,10 +42,10 @@ function slownotify() {
     duration=$(echo "$end_time - $start_time" | bc)
 
     # Check if duration exceeded the timeout using bc
-    if [ $(echo "$duration >= $timeout" | bc) -eq 1 ]; then
+    if [[ $(echo "$duration >= $timeout" | bc) -eq 1 ]]; then
 
         # Set default message if no custom message is provided
-        if [ "$custom_message" != "true" ]; then
+        if [[ "$custom_message" != "true" ]]; then
             message="command finished with status ${return_status} after ${duration}s: ${cmd[*]}"
         fi
 

@@ -3,34 +3,34 @@
 function rm-old-files() {
     source "$DOROTHY/sources/bash.bash"
 
-    # Help message function
     show_help() {
-        echo "Usage: $0 [--dry-run] [--since \"date string\"] [/optional/path]"
-        echo "Remove files in the specified path (or current directory if no path is provided) modified before the given date. If no date is provided, defaults to 30 days ago."
+        echo "Usage: $0 [-n|--dry-run] [-s|--since \"date string\"] [/optional/path]"
+        echo "Remove files modified before the given date (default: 30 days ago)."
         echo "  -h, --help     Display this help message and exit."
-        echo "  -n, --dry-run  Print the files that would be removed, but do not actually remove them."
-        echo "  --since        Optional. A date string understood by the 'date' command, e.g., '30 days ago'."
-        echo "  /optional/path Optional. Must be the last argument. The directory to remove in. Default is the current directory."
+        echo "  -n, --dry-run  Print files that would be removed without removing them."
+        echo "  -s, --since    A date string understood by 'date', e.g., '30 days ago'."
+        echo "  /optional/path Directory to remove from (default: current directory)."
     }
 
-    # Check for help option
-    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-        show_help
-        exit 0
-    fi
+    local dry_run=no
+    local list_args=()
 
-    local DRY_RUN=no
-    # Check for -n option
-    if [[ "${1:-}" == "-n" || "${1:-}" == "--dry-run" ]]; then
-        DRY_RUN=yes
-        shift
-    fi
+    args=$(getopt -o hns: -l help,dry-run,since: -- "$@") || { show_help; exit 1; }
+    eval set -- "$args"
+    while true; do
+        case "$1" in
+            -h|--help)     show_help; exit 0 ;;
+            -n|--dry-run)  dry_run=yes; shift ;;
+            -s|--since)    list_args+=(-s "$2"); shift 2 ;;
+            --)            shift; break ;;
+        esac
+    done
+    [[ $# -gt 0 ]] && list_args+=("$1")
 
-    if [ "$DRY_RUN" == "yes" ]; then
-        echo "wat $@"
-        list-old-files --print0 "$@" | xargs -n 1 -0 echo Would remove:
+    if [[ "$dry_run" == yes ]]; then
+        list-old-files -z "${list_args[@]}" | xargs -n 1 -0 echo Would remove:
     else
-        list-old-files --print0 "$@" | xargs -0 rm
+        list-old-files -z "${list_args[@]}" | xargs -0 rm
     fi
 
 }

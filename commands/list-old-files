@@ -3,60 +3,30 @@
 function list-old-files() {
     source "$DOROTHY/sources/bash.bash"
 
-    # Help message function
     show_help() {
-        echo "Usage: $0 [--since \"date string\"] [--print0] [/optional/path]"
-        echo "Finds files in the specified path (or current directory if no path is provided) modified before the given date. If no date is provided, defaults to 30 days ago."
+        echo "Usage: $0 [-s|--since \"date string\"] [-z|--print0] [/optional/path]"
+        echo "Finds files modified before the given date (default: 30 days ago)."
         echo "  -h, --help     Display this help message and exit."
-        echo "  --since        Optional. A date string understood by the 'date' command, e.g., '30 days ago'."
-        echo "  --print0       Optional. Terminate each output line with a 0 byte rather than a newline, for use with xargs -0."
-        echo "  /optional/path Optional. Must be the last argument. The directory to search in. Default is the current directory."
+        echo "  -s, --since    A date string understood by 'date', e.g., '30 days ago'."
+        echo "  -z, --print0   Terminate output with NUL bytes instead of newlines (for xargs -0)."
+        echo "  /optional/path Directory to search (default: current directory)."
     }
 
-    # Default date, path, and print mode
-    date_str="30 days ago"  # Default date
+    date_str="30 days ago"
     path="."
     print_mode="-print"
 
-    # Argument parsing
-    while [[ $# -gt 0 ]]; do
+    args=$(getopt -o hs:z -l help,since:,print0 -- "$@") || { show_help; exit 1; }
+    eval set -- "$args"
+    while true; do
         case "$1" in
-            --since)
-                if [[ -n "$2" && "$2" != --* ]]; then
-                    date_str="$2"
-                    shift 2
-                else
-                    echo "Error: '--since' option requires a non-empty date string."
-                    show_help
-                    exit 1
-                fi
-                ;;
-            --print0)
-                print_mode="-print0"
-                shift
-                ;;
-            -h|--help)
-                show_help
-                exit 0
-                ;;
-            -*)
-                echo "Error: Unsupported option $1"
-                show_help
-                exit 1
-                ;;
-            *)
-                # Assume any other argument is the path and must be the last argument
-                if [[ $# -eq 1 ]]; then
-                    path="$1"
-                    shift
-                else
-                    echo "Error: Path must be the last argument. Found unexpected parameter: $1"
-                    show_help
-                    exit 1
-                fi
-                ;;
+            -h|--help)   show_help; exit 0 ;;
+            -s|--since)  date_str="$2"; shift 2 ;;
+            -z|--print0) print_mode="-print0"; shift ;;
+            --)          shift; break ;;
         esac
     done
+    [[ $# -gt 0 ]] && path="$1"
 
     # Verify that a valid date string has been set
     if ! date -d "$date_str" +"%Y-%m-%d" &> /dev/null; then
@@ -68,7 +38,7 @@ function list-old-files() {
     ref_date=$(date -d "$date_str" +"%Y-%m-%d")
 
     # Use find to locate files older than the specified date with the chosen print mode
-    find $path -type f ! -newermt $ref_date $print_mode
+    find "$path" -type f ! -newermt "$ref_date" $print_mode
 
 }
 
