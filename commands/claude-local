@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+function claude-local() {
+	source "$DOROTHY/sources/bash.bash"
+
+	local LAST_MODEL_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/claude-local/last-model"
+	local USAGE="Usage: claude-local [list|help|<model>]
+  (no args)    Launch claude with the last saved model
+  list         List available models at http://localhost:1234
+  <model>      Save and launch claude with the given model
+  help         Show this help"
+
+	case "${1-}" in
+	help | --help | -h)
+		echo "$USAGE"
+		return
+		;;
+	list)
+		echo "Available models at http://localhost:1234:"
+		curl -sf http://localhost:1234/v1/models | jq -r '.data[].id'
+		return
+		;;
+	'')
+		if [[ ! -f "$LAST_MODEL_FILE" ]]; then
+			echo "No saved model. Run: claude-local list" >&2
+			return 1
+		fi
+		MODEL="$(cat "$LAST_MODEL_FILE")"
+		echo "Using saved model: $MODEL"
+		;;
+	*)
+		MODEL="$1"
+		mkdir -p "$(dirname "$LAST_MODEL_FILE")"
+		echo "$MODEL" > "$LAST_MODEL_FILE"
+		shift
+		;;
+	esac
+
+	ANTHROPIC_BASE_URL=http://localhost:1234 \
+	ANTHROPIC_AUTH_TOKEN=lmstudio \
+		claude --model "$MODEL" "$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	claude-local "$@"
+fi
