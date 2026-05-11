@@ -38,7 +38,10 @@ function run-in-bwrap() {
 			cmd=("$@")
 			break
 			;;
-		*) help ;;
+		*)
+			cmd=("$item" "$@")
+			break
+			;;
 		esac
 	done
 
