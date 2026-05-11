@@ -13,6 +13,7 @@ function run-in-bwrap() {
 
 			OPTIONS:
 			--no-cwd        Do not bind-mount \$PWD read-write (default: CWD is rw)
+			--no-default-rw Skip the built-in rw mounts (e.g. ~/.cache/claude-cli-nodejs)
 			--rw=SRC[:DEST] Add a read-write bind mount; DEST defaults to SRC
 			--ro=SRC[:DEST] Add a read-only bind mount; DEST defaults to SRC
 			--no-net        Unshare the network namespace
@@ -20,7 +21,7 @@ function run-in-bwrap() {
 		return 22 # EINVAL
 	}
 
-	local option_no_cwd='' option_no_net=''
+	local option_no_cwd='' option_no_net='' option_no_default_rw=''
 	local option_rw=() option_ro=()
 	local cmd=()
 
@@ -31,6 +32,7 @@ function run-in-bwrap() {
 		case "$item" in
 		'--help' | '-h') help ;;
 		'--no-cwd') option_no_cwd=yes ;;
+		'--no-default-rw') option_no_default_rw=yes ;;
 		'--no-net') option_no_net=yes ;;
 		'--rw='*) option_rw+=("${item#--rw=}") ;;
 		'--ro='*) option_ro+=("${item#--ro=}") ;;
@@ -52,6 +54,7 @@ function run-in-bwrap() {
 	local bwrap_args=(
 		--ro-bind / /
 		--dev /dev
+		--bind /dev/pts /dev/pts
 		--proc /proc
 		--ro-bind /sys /sys
 		--tmpfs /tmp
@@ -64,7 +67,26 @@ function run-in-bwrap() {
 		bwrap_args+=(--bind "$PWD" "$PWD")
 	fi
 
+	if [[ -z "$option_no_default_rw" ]]; then
+		local default_rw_dirs=(
+			"$HOME/.claude"
+			"$HOME/.local/state/claude"
+			"$HOME/.cache/claude-cli-nodejs"
+		)
+		local bind
+		for bind in "${default_rw_dirs[@]}"; do
+			[[ -d "$bind" ]] && bwrap_args+=(--bind "$bind" "$bind")
+		done
+		local default_rw_files=(
+			"$HOME/.claude.json"
+		)
+		for bind in "${default_rw_files[@]}"; do
+			[[ -f "$bind" ]] && bwrap_args+=(--bind "$bind" "$bind")
+		done
+	fi
+
 	local src dest bind
+
 	for bind in "${option_rw[@]}"; do
 		src="${bind%%:*}"
 		dest="${bind#*:}"
