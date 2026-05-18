@@ -31,9 +31,17 @@ function setup-util-ghidra() {
         echo "ghidra-${GHIDRA_VERSION} symlink already exists"
     else
         if is-wsl; then
-            ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun.bat" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            if [ -f "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/support/pyghidraRun.bat" ]; then
+                ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/support/pyghidraRun.bat" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            else
+                ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun.bat" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            fi
         else
-            ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            if [ -f "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/support/pyghidraRun" ]; then
+                ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/support/pyghidraRun" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            else
+                ln -s "$GHIDRA_DIR/$GHIDRA_UNZIP_DIR/ghidraRun" "$XDG_BIN_HOME/ghidra-${GHIDRA_VERSION}"
+            fi
         fi
     fi
 

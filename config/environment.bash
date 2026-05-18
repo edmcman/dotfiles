@@ -17,6 +17,7 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 # node needs this
 [[ -f /etc/ssl/certs/ca-certificates.crt ]] && export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt || true
 
+JDK_JAVA_OPTIONS=""
 
 # Java on mac, use the system CAs
 if test -f /Library/Keychains/System.keychain; then
@@ -44,8 +45,9 @@ if test -f ~/Projects/llama.cpp/build/bin/llama-server; then
   PATH="$PATH:$HOME/Projects/llama.cpp/build/bin"
 fi
 
-# java proxy options
-export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true"
+# java proxy and ssl options
+export JDK_JAVA_OPTIONS="-Djdk.rmi.ssl.client.enableEndpointIdentification=false $JDK_JAVA_OPTIONS"
+export JDK_JAVA_OPTIONS="-Djava.net.useSystemProxies=true $JDK_JAVA_OPTIONS"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
@@ -56,14 +58,6 @@ fi
 # conda
 # see activate_conda in interactive.{sh,fish}
 
-# asdf
-# This is important to have in here for non-interactive shells
-ASDF_SHIMS_DIR="$HOME/.asdf/shims"
-if [[ -d "$ASDF_SHIMS_DIR" ]]
-then
-  export PATH="$ASDF_SHIMS_DIR:$PATH"
-fi
-
 # A federated server...
 export DEBUGINFOD_URLS="https://debuginfod.elfutils.org/"
 
@@ -72,3 +66,13 @@ if [[ -f /etc/os-release ]] && grep -q "^ID=ubuntu" /etc/os-release
 then
   export DEBUGINFOD_URLS="$DEBUGINFOD_URLS https://debuginfod.ubuntu.com"
 fi
+
+function after_everything {
+  # This is important to have in environment.bash for non-interactive shells.
+  # The after_everything hook is important so that the asdf shims are in PATH before /usr/bin
+  ASDF_SHIMS_DIR="$HOME/.asdf/shims"
+  if [[ -d "$ASDF_SHIMS_DIR" ]]
+  then
+    export PATH="$ASDF_SHIMS_DIR:$PATH"
+  fi
+}

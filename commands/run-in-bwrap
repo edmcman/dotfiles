@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+function run-in-bwrap() {
+	source "$DOROTHY/sources/bash.bash"
+
+	function help {
+		cat <<-EOF >&2
+			ABOUT:
+			Run a command in a bubblewrap sandbox with a read-only root filesystem.
+
+			USAGE:
+			run-in-bwrap [...options] -- <command> [args...]
+
+			OPTIONS:
+			--no-cwd        Do not bind-mount \$PWD read-write (default: CWD is rw)
+			--no-default-rw Skip the built-in rw mounts (e.g. ~/.cache/claude-cli-nodejs)
+			--rw=SRC[:DEST] Add a read-write bind mount; DEST defaults to SRC
+			--ro=SRC[:DEST] Add a read-only bind mount; DEST defaults to SRC
+			--no-net        Unshare the network namespace
+		EOF
+		return 22 # EINVAL
+	}
+
+	local option_no_cwd='' option_no_net='' option_no_default_rw=''
+	local option_rw=() option_ro=()
+	local cmd=()
+
+	local item
+	while [[ $# -ne 0 ]]; do
+		item="$1"
+		shift
+		case "$item" in
+		'--help' | '-h') help ;;
+		'--no-cwd') option_no_cwd=yes ;;
+		'--no-default-rw') option_no_default_rw=yes ;;
+		'--no-net') option_no_net=yes ;;
+		'--rw='*) option_rw+=("${item#--rw=}") ;;
+		'--ro='*) option_ro+=("${item#--ro=}") ;;
+		'--')
+			cmd=("$@")
+			break
+			;;
+		*)
+			cmd=("$item" "$@")
+			break
+			;;
+		esac
+	done
+
+	if [[ ${#cmd[@]} -eq 0 ]]; then
+		help
+	fi
+
+	local bwrap_args=(
+		--ro-bind / /
+		--dev /dev
+		--bind /dev/pts /dev/pts
+		--proc /proc
+		--ro-bind /sys /sys
+		--tmpfs /tmp
+		--ro-bind /run /run
+		--ro-bind-try /home /home
+		--chdir "$PWD"
+	)
+
+	if [[ -z "$option_no_cwd" ]]; then
+		bwrap_args+=(--bind "$PWD" "$PWD")
+	fi
+
+	if [[ -z "$option_no_default_rw" ]]; then
+		local default_rw_dirs=(
+			"$HOME/.claude"
+			"$HOME/.local/state/claude"
+			"$HOME/.cache/claude-cli-nodejs"
+		)
+		local bind
+		for bind in "${default_rw_dirs[@]}"; do
+			[[ -d "$bind" ]] && bwrap_args+=(--bind "$bind" "$bind")
+		done
+		local default_rw_files=(
+			"$HOME/.claude.json"
+		)
+		for bind in "${default_rw_files[@]}"; do
+			[[ -f "$bind" ]] && bwrap_args+=(--bind "$bind" "$bind")
+		done
+	fi
+
+	local src dest bind
+
+	for bind in "${option_rw[@]}"; do
+		src="${bind%%:*}"
+		dest="${bind#*:}"
+		[[ "$src" == "$bind" ]] && dest="$src"
+		bwrap_args+=(--bind "$src" "$dest")
+	done
+
+	for bind in "${option_ro[@]}"; do
+		src="${bind%%:*}"
+		dest="${bind#*:}"
+		[[ "$src" == "$bind" ]] && dest="$src"
+		bwrap_args+=(--ro-bind "$src" "$dest")
+	done
+
+	[[ -n "$option_no_net" ]] && bwrap_args+=(--unshare-net)
+
+	bwrap "${bwrap_args[@]}" -- "${cmd[@]}"
+}
+
+if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
+	run-in-bwrap "$@"
+fi

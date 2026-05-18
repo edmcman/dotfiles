@@ -5,7 +5,7 @@ function size-helper() {
 
     set -e
 
-    if [ "${1:-}" == "" ]
+    if [[ "${1:-}" == "" ]]
     then
         echo "Usage: size-helper <size expression>"
         exit 1
