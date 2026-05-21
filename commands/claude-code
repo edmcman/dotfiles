@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+function claude-code() {
+	source "$DOROTHY/sources/bash.bash"
+
+	local host="${CLAUDE_DEFAULT_BASE_URL-}"
+	local model="${CLAUDE_DEFAULT_MODEL-}"
+	local auth_token="${CLAUDE_DEFAULT_AUTH_TOKEN-}"
+
+	local USAGE="Usage: claude-code [OPTIONS] [ARGS]
+Options:
+  --host URL         Base URL for Claude API (default: \$CLAUDE_DEFAULT_BASE_URL)
+  --model MODEL      Model to use (default: \$CLAUDE_DEFAULT_MODEL)
+  --token TOKEN      Auth token (default: \$CLAUDE_AUTH_TOKEN)
+  --list-models      List available models at the host
+  --select-model     Interactively select a model from available models
+  --help             Show this help
+
+Arguments are passed through to the claude command."
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--help | -h)
+			echo "$USAGE"
+			return
+			;;
+		--host)
+			host="$2"
+			shift 2
+			;;
+		--model)
+			model="$2"
+			shift 2
+			;;
+		--token)
+			auth_token="$2"
+			shift 2
+			;;
+		--list-models)
+			if [[ -z "$host" ]]; then
+				echo "Error: No host provided. Set \$CLAUDE_DEFAULT_BASE_URL or use --host" >&2
+				return 1
+			fi
+			echo "Available models at $host/v1/models:"
+			curl -sf "$host/v1/models" | jq -r '.data[].id'
+			return
+			;;
+		--select-model)
+			if [[ -z "$host" ]]; then
+				echo "Error: No host provided. Set \$CLAUDE_DEFAULT_BASE_URL or use --host" >&2
+				return 1
+			fi
+			local models=()
+			mapfile -t models < <(curl -sf "$host/v1/models" | jq -r '.data[].id')
+			if [[ ${#models[@]} -eq 0 ]]; then
+				echo "Error: No models available" >&2
+				return 1
+			fi
+			model=$(choose "Select a model:" --default-exact="$model" -- "${models[@]}")
+			if [[ -z "$model" ]]; then
+				echo "No model selected" >&2
+				return 1
+			fi
+			shift
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	if [[ -z "$host" ]]; then
+		echo "Error: No host provided. Set \$CLAUDE_DEFAULT_BASE_URL or use --host" >&2
+		return 1
+	fi
+
+	if [[ -z "$model" ]]; then
+		echo "Error: No model provided. Set \$CLAUDE_DEFAULT_MODEL or use --model" >&2
+		return 1
+	fi
+
+	ANTHROPIC_BASE_URL="$host" \
+	ANTHROPIC_AUTH_TOKEN="$auth_token" \
+		claude --model "$model" "$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	claude-code "$@"
+fi
