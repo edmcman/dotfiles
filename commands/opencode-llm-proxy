@@ -27,7 +27,7 @@ function opencode-llm-proxy() {
 	fi
 
 	cd "$workdir" || return 1
-	exec opencode serve "$@"
+	exec opencode "$@"
 }
 
 if test "$0" = "${BASH_SOURCE[0]}"; then
