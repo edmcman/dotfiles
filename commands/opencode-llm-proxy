@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+function opencode-llm-proxy() {
+	source "$DOROTHY/sources/bash.bash"
+
+	local workdir="$HOME/opencode-llm-proxy"
+	local install_command="npm i -g opencode-ai"
+
+	if [[ "${1-}" == "--help" || "${1-}" == "-h" ]]; then
+		echo "Usage: opencode-llm-proxy [ARGS]"
+		echo "Run \`opencode serve\` from ~/opencode-llm-proxy."
+		echo "If the repository does not exist, run: install-symlinks"
+		echo "If \`opencode\` is missing, install it with: $install_command"
+		return
+	fi
+
+	if [[ ! -d "$workdir" ]]; then
+		echo "Directory $workdir does not exist." >&2
+		echo "Please create it or run: install-symlinks" >&2
+		return 1
+	fi
+
+	if ! command -v opencode >/dev/null 2>&1; then
+		echo "Command \`opencode\` not found." >&2
+		echo "Install it with: $install_command" >&2
+		return 1
+	fi
+
+	cd "$workdir" || return 1
+	exec opencode serve "$@"
+}
+
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	opencode-llm-proxy "$@"
+fi

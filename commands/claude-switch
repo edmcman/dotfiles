@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-function claude-code() {
+function claude-switch() {
 	source "$DOROTHY/sources/bash.bash"
 
 	local host="${CLAUDE_DEFAULT_BASE_URL-}"
-	local model="${CLAUDE_DEFAULT_MODEL-}"
+	local model=""
+	local default_model="${CLAUDE_DEFAULT_MODEL-}"
 	local auth_token="${CLAUDE_DEFAULT_AUTH_TOKEN-}"
 
-	local USAGE="Usage: claude-code [OPTIONS] [ARGS]
+	local USAGE="Usage: claude-switch [OPTIONS] [ARGS]
 Options:
   --host URL         Base URL for Claude API (default: \$CLAUDE_DEFAULT_BASE_URL)
   --model MODEL      Model to use (default: \$CLAUDE_DEFAULT_MODEL)
@@ -16,7 +17,27 @@ Options:
   --select-model     Interactively select a model from available models
   --help             Show this help
 
+If no model is specified, the command will prompt to select one.
+
 Arguments are passed through to the claude command."
+
+	select_model() {
+		if [[ -z "$host" ]]; then
+			echo "Error: No host provided. Set \$CLAUDE_DEFAULT_BASE_URL or use --host" >&2
+			return 1
+		fi
+		local models=()
+		mapfile -t models < <(curl -sf "$host/v1/models" | jq -r '.data[].id')
+		if [[ ${#models[@]} -eq 0 ]]; then
+			echo "Error: No models available" >&2
+			return 1
+		fi
+		model=$(choose "Select a model:" --default-exact="$default_model" -- "${models[@]}")
+		if [[ -z "$model" ]]; then
+			echo "No model selected" >&2
+			return 1
+		fi
+	}
 
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
@@ -86,5 +107,5 @@ Arguments are passed through to the claude command."
 
 # fire if invoked standalone
 if test "$0" = "${BASH_SOURCE[0]}"; then
-	claude-code "$@"
+	claude-switch "$@"
 fi
