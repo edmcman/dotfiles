@@ -19,6 +19,14 @@ GHIDRA_INSTALL_DIR="$(ls -d "$HOME"/Ghidra/ghidra_*_PUBLIC | sort -t_ -k2,2 | ta
 
 JDK_JAVA_OPTIONS=""
 
+# Claude Code gets stuck a lot and it's annoying to have to wait for it to timeout.  Set a shorter timeout for now.
+# https://code.claude.com/docs/en/env-vars
+export API_TIMEOUT_MS=600000 # 10 minutes, default
+export CLAUDE_STREAM_IDLE_TIMEOUT_MS=60000 # clamped to 5 minutes minimum anyway :-(
+export CLAUDE_ENABLE_STREAM_WATCHDOG=1
+export CLAUDE_ENABLE_BYTE_WATCHDOG=1
+export CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS=60000
+
 # Java on mac, use the system CAs
 if test -f /Library/Keychains/System.keychain; then
   export JAVA_TOOL_OPTIONS
