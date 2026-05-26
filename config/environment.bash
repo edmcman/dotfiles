@@ -83,4 +83,11 @@ function after_everything {
   then
     export PATH="$ASDF_SHIMS_DIR:$PATH"
   fi
+
+  # put homebrew python on path
+  if test -d /opt/homebrew/opt/python@3.14/libexec/bin; then
+    export PATH
+    PATH="/opt/homebrew/opt/python@3.14/libexec/bin:$PATH"
+  fi
+
 }
