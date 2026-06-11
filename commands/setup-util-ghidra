@@ -54,6 +54,9 @@ function setup-util-ghidra() {
 
     # Make ghidra venv
     test -d "$GHIDRA_DIR/venv" || python -m venv "$GHIDRA_DIR/venv"
+
+    # https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraDocs/GettingStarted.md#building-native-components
+    (cd "$GHIDRA_DIR/support/gradle" && ./gradlew buildNatives)
 }
 
 # fire if invoked standalone
