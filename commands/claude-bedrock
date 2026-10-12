@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function claude-bedrock() {
+	source "$DOROTHY/sources/bash.bash"
+
+	CLAUDE_CONFIG_DIR="$HOME/.claude-bedrock" \
+	CLAUDE_CODE_USE_BEDROCK=1 \
+		claude "$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	claude-bedrock "$@"
+fi
