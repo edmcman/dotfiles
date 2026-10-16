@@ -3,8 +3,21 @@
 function claude-bedrock() {
 	source "$DOROTHY/sources/bash.bash"
 
+	if [[ ! ${1-} =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
+		printf 'Usage: claude-bedrock <token-prefix> [claude arguments...]\n' >&2
+		return 1
+	fi
+	local token_variable="${1}_AWS_BEARER_TOKEN_BEDROCK"
+	shift
+	if [[ -z ${!token_variable:-} ]]; then
+		printf 'Missing bearer token: %s\n' "$token_variable" >&2
+		return 1
+	fi
+
 	CLAUDE_CONFIG_DIR="$HOME/.claude-bedrock" \
 	CLAUDE_CODE_USE_BEDROCK=1 \
+	CLAUDE_CODE_USE_MANTLE=1 \
+	AWS_BEARER_TOKEN_BEDROCK="${!token_variable}" \
 		claude "$@"
 }
 
