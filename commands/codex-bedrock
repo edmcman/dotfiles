@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+function codex-bedrock() {
+	source "$DOROTHY/sources/bash.bash"
+
+	if [[ ! ${1-} =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
+		printf 'Usage: codex-bedrock <token-prefix> [codex arguments...]\n' >&2
+		return 1
+	fi
+	local token_variable="${1}_AWS_BEARER_TOKEN_BEDROCK"
+	shift
+	if [[ -z ${!token_variable:-} ]]; then
+		printf 'Missing bearer token: %s\n' "$token_variable" >&2
+		return 1
+	fi
+
+	AWS_BEARER_TOKEN_BEDROCK="${!token_variable}" \
+	AWS_REGION="${AWS_REGION:-us-east-1}" \
+		npx -y @openai/codex \
+		-c model_provider='"amazon-bedrock"' \
+		-c model='"openai.gpt-6.1-sol"' \
+		"$@"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	codex-bedrock "$@"
+fi
