@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function ghpr-watch() {
+	source "$DOROTHY/sources/bash.bash"
+
+	local interval=30 repo='' opt OPTIND=1
+	local usage='Usage: ghpr-watch [-i seconds] [-R owner/repo] <pr-number> [<pr-number>...]
+Watch the CI checks of one or more PRs (all in the same repo) concurrently,
+notifying as each finishes. Exits 0 if all passed, 1 otherwise.
+  -i seconds    polling interval (default: 30)
+  -R owner/repo repository of the PRs (default: current repo)'
+	while getopts 'i:R:' opt; do
+		case "$opt" in
+			i) interval=$OPTARG ;;
+			R) repo=$OPTARG ;;
+			*) printf '%s\n' "$usage" >&2; return 1 ;;
+		esac
+	done
+	shift $((OPTIND - 1))
+
+	if [[ $# -eq 0 || "$*" =~ [^0-9\ ] ]]; then
+		printf '%s\n' "$usage" >&2
+		return 1
+	fi
+
+	function watch_one() {
+		local pr=$1 err status message
+		while true; do
+			status=0
+			err=$(gh pr checks "$pr" --watch --interval "$interval" ${repo:+-R "$repo"} 2>&1 >/dev/null) || status=$?
+			[[ $status -eq 1 && $err == *'no checks reported'* ]] || break
+			sleep "$interval"
+		done
+		case "$status:$err" in
+			0:*) message="PR #$pr: checks passed" ;;
+			1:) message="PR #$pr: checks failed" ;;
+			*) message="PR #$pr: error: $err" ;;
+		esac
+		printf '%s\n' "$message"
+		notify "$message" >/dev/null
+		return "$((status != 0))"
+	}
+
+	local pr pids=() failed=0
+	for pr in "$@"; do
+		watch_one "$pr" &
+		pids+=("$!")
+	done
+	for pid in "${pids[@]}"; do
+		wait "$pid" || failed=1
+	done
+	return "$failed"
+}
+
+# fire if invoked standalone
+if test "$0" = "${BASH_SOURCE[0]}"; then
+	ghpr-watch "$@"
+fi
