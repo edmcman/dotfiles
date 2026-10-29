@@ -14,7 +14,11 @@ function claude-bedrock() {
 		return 1
 	fi
 
-	CLAUDE_CONFIG_DIR="$HOME/.claude-bedrock" \
+	AWS_REGION="${AWS_REGION:-us-east-1}" \
+	ANTHROPIC_DEFAULT_FABLE_MODEL=us.anthropic.claude-fable-5 \
+	ANTHROPIC_DEFAULT_SONNET_MODEL=us.anthropic.claude-sonnet-5-5 \
+	ANTHROPIC_DEFAULT_OPUS_MODEL=us.anthropic.claude-opus-5-5 \
+	ANTHROPIC_DEFAULT_HAIKU_MODEL=us.anthropic.claude-haiku-5-5 \
 	CLAUDE_CODE_USE_BEDROCK=1 \
 	CLAUDE_CODE_USE_MANTLE=1 \
 	AWS_BEARER_TOKEN_BEDROCK="${!token_variable}" \
