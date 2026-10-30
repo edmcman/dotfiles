@@ -3,12 +3,14 @@
 function ida64() {
     source "$DOROTHY/sources/bash.bash"
 
-    # XXX ls /opt/idapro and find the highest version by default?
+    local IDADIR="/opt/idapro"
+    local VERSION="${IDA_VERSION:-$(ls "$IDADIR" | sort -V | tail -n1)}"
 
-    IDADIR="/opt/idapro"
-    VERSION="8.4"
+    # 9.0 merged ida64 into ida; before that, ida is the 32-bit build
+    local BIN="$IDADIR/$VERSION/ida64"
+    test -x "$BIN" || BIN="$IDADIR/$VERSION/ida"
 
-    "$IDADIR"/"$VERSION"/ida64 "$@"
+    "$BIN" "$@"
 }
 
 # fire if invoked standalone
