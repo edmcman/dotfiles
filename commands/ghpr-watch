@@ -23,12 +23,13 @@ notifying as each finishes. Exits 0 if all passed, 1 otherwise.
 		return 1
 	fi
 
+	local retryable='no checks reported|error connecting|connection (reset|refused)|timeout|timed out|tls handshake|dial tcp|unexpected eof|no such host|temporary failure|network is unreachable|rate limit|http (429|5[0-9]{2})'
 	function watch_one() {
 		local pr=$1 err status message
 		while true; do
 			status=0
 			err=$(gh pr checks "$pr" --watch --interval "$interval" ${repo:+-R "$repo"} 2>&1 >/dev/null) || status=$?
-			[[ $status -eq 1 && $err == *'no checks reported'* ]] || break
+			[[ $status -ne 0 && ${err,,} =~ $retryable ]] || break
 			sleep "$interval"
 		done
 		case "$status:$err" in
